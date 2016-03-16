@@ -59,33 +59,39 @@ class DividendOption():
         self.CashRho = self.Rho / 100
         
 # Time to input some data
-
-Type = input('Enter the option Type (Call/Put): ')
-Uprice = float(input('Enter the Underlying Price: '))
-Sprice = float(input('Enter the Strike Price: '))
-TTE = float(input('Enter Time to Expiration (in days): '))
-IntRate = float(input('Enter the Interest Rate (%): '))
-Vol = float(input('Enter the Volatility (%): '))
-Div = float(input('Enter the Dividend Yield (%): '))
-
-# Creating the option object
-option = DividendOption(Type, Uprice, Sprice, TTE/365, IntRate/100, Vol/100, Div/100) 
-option.Pricing()
-option.Greeks()
-
-print('================')
-print('Price: ', str(round(option.Price, 5)))
-print('Delta: ', str(round(option.Delta, 5)))
-print('Gamma: ', str(round(option.Gamma, 5)))
-print('Theta: ', str(round(option.Theta, 5)))
-print('Vega:  ', str(round(option.Vega, 5)))
-print('Rho:   ', str(round(option.Rho, 5)))
-print(' ')
-print('Delta (Cash): ', str(round(option.CashDelta, 5)))
-print('Gamma (1%): ', str(round(option.CashGamma, 5)))
-print('Theta (1 day): ', str(round(option.Theta, 5)))
-print('Vega (1% vol shift): ', str(round(option.CashVega, 5)))
-print('Rho (1% rate shift): ', str(round(option.CashRho, 5)))
-print('================')
+while True:
+    Type = input('Enter the option Type (Call/Put): ')
+    Uprice = float(input('Enter the Underlying Price: '))
+    Sprice = float(input('Enter the Strike Price: '))
+    TTE = float(input('Enter Time to Expiration (in days): '))
+    IntRate = float(input('Enter the Interest Rate (%): '))
+    Vol = float(input('Enter the Volatility (%): '))
+    Div = float(input('Enter the Dividend Yield (%): '))
+    
+    # Creating the option object
+    option = DividendOption(Type, Uprice, Sprice, TTE/365, IntRate/100, Vol/100, Div/100) 
+    option.Pricing()
+    option.Greeks()
+    
+    print('================')
+    print('Price: ', str(round(option.Price, 5)))
+    print('Delta: ', str(round(option.Delta, 5)))
+    print('Gamma: ', str(round(option.Gamma, 5)))
+    print('Theta: ', str(round(option.Theta, 5)))
+    print('Vega:  ', str(round(option.Vega, 5)))
+    print('Rho:   ', str(round(option.Rho, 5)))
+    print(' ')
+    print('Delta (Cash): ', str(round(option.CashDelta, 5)))
+    print('Gamma (1%): ', str(round(option.CashGamma, 5)))
+    print('Theta (1 day): ', str(round(option.Theta, 5)))
+    print('Vega (1% vol shift): ', str(round(option.CashVega, 5)))
+    print('Rho (1% rate shift): ', str(round(option.CashRho, 5)))
+    print('================')
+    
+    next_one = input('Do you want more? (Yes/No): ')
+    if next_one.lower() == 'yes':
+        continue
+    else:
+        break
 
 

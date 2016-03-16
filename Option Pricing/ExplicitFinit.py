@@ -54,8 +54,126 @@ class DiffOption(object):
             else:
                 C[j][0] = self.X
                 C[j][M] = 0
-        self.ExplFinDif = C[0][SGridPt]
-        
-#                   (AmerEur, CallPut, S, X, T, r, b, v, M)
-option = DiffOption('American', 'Call', 100, 110, 0.5, 0.1, 0.1, 0.27, 30)
-option.price()
+        self.Price = C[0][SGridPt]
+
+while True:
+    Type = input('Enter the option Type (Call/Put): ')
+    AmerEur = input('Enter (American/European): ')
+    Uprice = float(input('Enter the Underlying Price: '))
+    Sprice = float(input('Enter the Strike Price: '))
+    TTE = float(input('Enter Time to Expiration (in days): '))
+    IntRate = float(input('Enter the Interest Rate (%): '))
+    B = float(input('Enter b (%): '))
+    Vol = float(input('Enter the Volatility (%): '))
+    NumberSteps = int(input('Enter the time steps (n): '))        
+            
+            
+    option = DiffOption(AmerEur, Type, Uprice, Sprice, TTE/365, IntRate/100, B/100, Vol/100, NumberSteps) 
+    #option = DiffOption('American', 'Call', 100, 110, 0.5, 0.1, 0.1, 0.27, 30)
+    option.price()
+    
+    
+    
+    # Delta calculation
+    S_1 = option.S + 0.01
+    S_2 = option.S - 0.01
+    
+    option_1 = DiffOption(AmerEur, Type, S_1, Sprice, TTE/365, IntRate/100, B/100, Vol/100, NumberSteps) 
+    option_1.price()
+    price_1 = option_1.Price
+    option_2 = DiffOption(AmerEur, Type, S_2, Sprice, TTE/365, IntRate/100, B/100, Vol/100, NumberSteps)   
+    option_2.price()
+    price_2 = option_2.Price
+    
+    Delta = (price_1 - price_2) / 2 * option.S    
+    
+
+
+
+    # Gamma calculation
+    S_1 = option.S + 0.02
+    S_2 = option.S 
+    
+    option_1 = DiffOption(AmerEur, Type, S_1, Sprice, TTE/365, IntRate/100, B/100, Vol/100, NumberSteps) 
+    option_1.price()
+    price_1 = option_1.Price
+    option_2 = DiffOption(AmerEur, Type, S_2, Sprice, TTE/365, IntRate/100, B/100, Vol/100, NumberSteps)   
+    option_2.price()
+    price_2 = option_2.Price
+    
+    Delta_1 = (price_1 - price_2) / 2 * option.S  
+    
+    S_1 = option.S 
+    S_2 = option.S - 0.02
+    
+    option_1 = DiffOption(AmerEur, Type, S_1, Sprice, TTE/365, IntRate/100, B/100, Vol/100, NumberSteps) 
+    option_1.price()
+    price_1 = option_1.Price
+    option_2 = DiffOption(AmerEur, Type, S_2, Sprice, TTE/365, IntRate/100, B/100, Vol/100, NumberSteps)   
+    option_2.price()
+    price_2 = option_2.Price
+    
+    Delta_2 = (price_1 - price_2) / 2 * option.S 
+    
+    Gamma = (Delta_1-Delta_2) / 2 * option.S
+
+    
+    # Theta calculation
+    T_1 = option.T + 0.01
+    T_2 = option.T - 0.01
+    
+    option_1 = DiffOption(AmerEur, Type, Uprice, Sprice, T_1, IntRate/100, B/100, Vol/100, NumberSteps) 
+    option_1.price()
+    price_1 = option_1.Price
+    option_2 = DiffOption(AmerEur, Type, Uprice, Sprice, T_2, IntRate/100, B/100, Vol/100, NumberSteps) 
+    option_2.price()
+    price_2 = option_2.Price
+    
+    Theta = (price_1 - price_2) / 2 * option.T
+
+    # Vega calculation
+    vol_1 = option.v + 0.01
+    vol_2 = option.v - 0.01
+    
+    option_1 = DiffOption(AmerEur, Type, Uprice, Sprice, TTE/365, IntRate/100, B/100, vol_1, NumberSteps)
+    option_1.price()
+    price_1 = option_1.Price
+    option_2 = DiffOption(AmerEur, Type, Uprice, Sprice, TTE/365, IntRate/100, B/100, vol_2, NumberSteps)   
+    option_2.price()
+    price_2 = option_2.Price
+    
+    vega = (price_1 - price_2) / 2 * option.v    
+
+    
+    
+    # Rho calculation
+    IntRate_1 = option.r + 0.01
+    IntRate_2 = option.r - 0.01    
+    
+    option_1 = DiffOption(Type, AmerEur, Uprice, Sprice, TTE/365, IntRate_1, B/100, Vol/100, NumberSteps) 
+    option_1.price()
+    price_1 = option_1.Price
+    option_2 = DiffOption(Type, AmerEur, Uprice, Sprice, TTE/365, IntRate_2, B/100, Vol/100, NumberSteps) 
+    option_2.price()
+    price_2 = option_2.Price
+    
+    rho = (price_1 - price_2) / 2 * option.r
+    
+
+    
+    print('')    
+    print('================')
+    print('Price: ', str(round(option.Price, 5)))
+    print('Delta: ', str(round(Delta, 5)))
+    print('Gamma: ', str(round(Gamma, 5)))
+    print('Theta: ', str(round(Theta, 5)))
+    print('Vega:  ', str(round(vega, 5)))
+    print('Rho:   ', str(round(rho, 5)))
+    print('================')
+    print('')
+    
+    next_one = input('Do you want more? (Yes/No): ')
+    if next_one.lower() == 'yes':
+        continue
+    else:
+        break

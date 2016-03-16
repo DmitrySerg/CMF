@@ -55,15 +55,72 @@ class Option(object):
         self.Gamma = ReturnValue[2]
         self.Theta = ReturnValue[3]
 
-#               (CallPut, AmerEur, S, X, T, r, b, v, n)
-option = Option('Call', 'European', 100, 105, 1, 0.02, 0.03, 0.3, 10)
-OptionValue = [0]*option.n
-ReturnValue = [0]*4
-option.price()
 
-print('================')
-print('Price: ', str(round(option.Price, 5)))
-print('Delta: ', str(round(option.Delta, 5)))
-print('Gamma: ', str(round(option.Gamma, 5)))
-print('Theta: ', str(round(option.Theta, 5)))
-print('================')
+while True:
+    Type = input('Enter the option Type (Call/Put): ')
+    AmerEur = input('Enter (American/European): ')
+    Uprice = float(input('Enter the Underlying Price: '))
+    Sprice = float(input('Enter the Strike Price: '))
+    TTE = float(input('Enter Time to Expiration (in days): '))
+    IntRate = float(input('Enter the Interest Rate (%): '))
+    B = float(input('Enter b (%): '))
+    Vol = float(input('Enter the Volatility (%): '))
+    NumberSteps = int(input('Enter the time steps (n): '))
+    
+    option = Option(Type, AmerEur, Uprice, Sprice, TTE/365, IntRate/100, B/100, Vol/100, NumberSteps) 
+    #option = Option('Call', 'European', 100, 105, 1, 0.02, 0.03, 0.3, 10)
+    OptionValue = [0]*option.n
+    ReturnValue = [0]*4
+    option.price()
+    
+    
+    # Vega calculation
+    vol_1 = option.v + 0.01
+    vol_2 = option.v - 0.01
+    
+    option_1 = Option(Type, AmerEur, Uprice, Sprice, TTE/365, IntRate/100, B/100, vol_1, NumberSteps)
+    OptionValue = [0]*option_1.n
+    ReturnValue = [0]*4
+    option_1.price()
+    price_1 = option_1.Price
+     
+    option_2 = Option(Type, AmerEur, Uprice, Sprice, TTE/365, IntRate/100, B/100, vol_2, NumberSteps)   
+    OptionValue = [0]*option_2.n
+    ReturnValue = [0]*4
+    option_2.price()
+    price_2 = option_2.Price
+    
+    vega = (price_1 - price_2) / 2 * option.v
+    
+    
+    # Rho calculation
+    IntRate_1 = option.r + 0.01
+    IntRate_2 = option.r - 0.01    
+    
+    option_1 = Option(Type, AmerEur, Uprice, Sprice, TTE/365, IntRate_1, B/100, Vol/100, NumberSteps) 
+    OptionValue = [0]*option_1.n
+    ReturnValue = [0]*4
+    option_1.price()
+    price_1 = option_1.Price
+    
+    option_2 = Option(Type, AmerEur, Uprice, Sprice, TTE/365, IntRate_2, B/100, Vol/100, NumberSteps) 
+    OptionValue = [0]*option_2.n
+    ReturnValue = [0]*4
+    option_2.price()
+    price_2 = option_2.Price
+    
+    rho = (price_1 - price_2) / 2 * option.r
+    
+    print('================')
+    print('Price: ', str(round(option.Price, 5)))
+    print('Delta: ', str(round(option.Delta, 5)))
+    print('Gamma: ', str(round(option.Gamma, 5)))
+    print('Theta: ', str(round(option.Theta, 5)))
+    print('Vega:  ', str(round(vega, 5)))
+    print('Rho:   ', str(round(rho, 5)))
+    print('================')
+    next_one = input('Do you want more? (Yes/No): ')
+    if next_one.lower() == 'yes':
+        continue
+    else:
+        break
