@@ -1,5 +1,5 @@
 # CMF MSU
 
-Center of Mathematical Finance, Moscow State Univercity
+Center of Mathematical Finance, Moscow State University
 
 Data Analysis Course
